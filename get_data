@@ -1,0 +1,5 @@
+#!/bin/sh
+
+wget http://www.syscop.de/files/2016ws/msi/exercises/exercise8.pdf
+
+wget http://www.syscop.de/files/2016ws/msi/exercises/exercise8_data.mat
