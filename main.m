@@ -124,7 +124,7 @@ theta_RLS = zeros(d,control_dim);
 Q = eye(d);
 rls_fit = zeros(N,control_dim);
 for i = 1:N
-    [theta_RLS, Q] = RLS(theta_RLS, Q, Phi(i,:,:)', XYm(i,:), 0.9);
+    [theta_RLS, Q] = RLS(theta_RLS, Q, Phi(i,:,:)', XYm(i,:), 0.85);
     rls_fit(i,:) = fit(i,theta_RLS)';
 end
 
