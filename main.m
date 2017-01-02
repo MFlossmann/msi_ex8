@@ -49,7 +49,7 @@ plot(linspace(1,80),lls_fit(:,1),'-', 'DisplayName', 'LLS fit')
 title('x position and estimate')
 hold off;
 
-robot_y = figure;
+rob_y = figure;
 hold on;
 plot(t,XYm(:,2),'o', 'DisplayName', 'True positions')
 plot(linspace(1,80),lls_fit(:,2),'-', 'DisplayName', 'LLS fit')
@@ -83,7 +83,7 @@ plot(1:size(rls_fit,1),rls_fit(:,1),'-', 'DisplayName', 'RLS fit')
 %legend('show');
 hold off;
 
-figure(robot_y);
+figure(rob_y);
 hold on;
 plot(1:size(rls_fit,1),rls_fit(:,2),'-', 'DisplayName', 'RLS fit')
 %legend('show');
@@ -113,7 +113,7 @@ plot(1:size(rls_fit, 1),rls_fit(:,1),'--', 'DisplayName', 'RLS_\alpha fit')
 %legend('show');
 hold off;
 
-figure(robot_y);
+figure(rob_y);
 hold on;
 plot(1:size(rls_fit, 1),rls_fit(:,2),'--', 'DisplayName', 'RLS_\alpha fit')
 %legend('show');
@@ -140,8 +140,61 @@ plot(1:size(rls_fit, 1),rls_fit(:,1),'--', 'DisplayName', 'RLS smooth')
 legend('show');
 hold off;
 
-figure(robot_y);
+figure(rob_y);
 hold on;
 plot(1:size(rls_fit, 1),rls_fit(:,2),'--', 'DisplayName', 'RLS smooth')
 legend('show');
 hold off;
+
+%% 1.d
+% TODO: Implement proper confidence intervals
+
+theta_RLS = zeros(d,control_dim);
+Q = eye(d);
+% osa = one step ahead
+sigma_theta = eye(d);
+sigma_theta(:,:,2) = eye(d);
+% sigma_osa can be assumed to be diagonal, since x and y are
+% assumed to be independent
+sigma_osa = zeros(N-1,control_dim);
+osa_fit = zeros(N,control_dim);
+
+for i = 1:N
+    % extrapolate
+    osa_fit(i,:) = Phi(i,:)*theta_RLS;
+    
+    if i < N
+        [theta_RLS, Q] = RLS(theta_RLS, Q, Phi(i+1,:)', XYm(i+1,:), 0.85);
+    end
+    
+    % calculate sigmas for theta and one step ahead estimates
+    for j = 1:control_dim
+        sigma_theta(:,:,j) =(norm(XYm(1:i,j) - Phi(1:i,:) * theta_RLS(:,j))/(N-d))* ...
+                                inv(Phi(1:i,:)'*Phi(1:i,:));
+            
+        sigma_osa(i,j) = Phi(i+1,:)*sigma_theta(:,:,1)*Phi(i+1,:)';
+    end
+end
+
+figure(rob_x);
+hold on;
+plot(1:size(osa_fit, 1),osa_fit(:,1),'r-', 'DisplayName', 'OSA extrap.')
+legend('show');
+hold off;
+
+figure(robot_2D);
+hold on;
+plot(osa_fit(:,1),osa_fit(:,2), 'r-', 'DisplayName', 'OSA extrap.')
+legend('show');
+hold off;
+
+figure(rob_y);
+hold on;
+plot(1:size(osa_fit, 1),osa_fit(:,2),'r-', 'DisplayName', 'OSA extrap.')
+legend('show');
+hold off;
+
+%% 2.a)
+
+param = [0.2; 0.2; 0.6];
+x0 = [0;0;0];
