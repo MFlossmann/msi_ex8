@@ -252,24 +252,21 @@ x_sim_euler= sim_euler(t, x0, u, param);
 %System output [x y]'
 y_euler= x_sim_euler(1:2,:);
 
-robot_sim= figure;
-plot(y_euler(1,:), y_euler(2,:), 'r', 'DisplayName', 'Euler method');
-title('2D robot path simulation')
-hold on;
+figure(4)
+plot(y_euler(1,:), y_euler(2,:));
 
 %% 2.d)
 %Runge-Kutta integrator of order 4
 
-%simulate robot's path using RK4
-x_sim_rk= sim_rk4(t, x0, u, param);
+%simulate robot's path using euler steps
+x_sim_euler= sim_euler(t, x0, u, param);
 
 %System output [x y]'
-y_rk= x_sim_rk(1:2,:);
+y_euler= x_sim_euler(1:2,:);
 
-figure(robot_sim)
-plot(y_rk(1,:), y_rk(2,:), 'b', 'DisplayName', 'Runge-Kutta method of order 4');
+figure(4)
+plot(y_euler(1,:), y_euler(2,:));
 
-legend('show');
 
 
 
