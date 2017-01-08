@@ -233,11 +233,15 @@ x_rk4 = sim_rk4(size(u,1), x0, u, param);
 [bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
                               ones(1,size(x_rk4,2))*0.02);                  
 figure;                  
-quiver(x_euler(2,:),x_euler(1,:),...
-       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
-quiver(x_rk4(2,:), x_rk4(1,:),...
-       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);   
+hold on;
+%quiver(x_euler(2,:),x_euler(1,:),...
+%       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+%quiver(x_rk4(2,:), x_rk4(1,:),...
+%       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);  
+plot(x_euler(2,:),x_euler(1,:),'bx');
+plot(x_rk4(2,:), x_rk4(1,:),'rx');
 title('Simple (boring) line');
+hold off;
 
 %% circle
 u(:,1) = 0.5*ones(90,1);
@@ -249,11 +253,15 @@ x_rk4 = sim_rk4(size(u,1), x0, u, param);
 [bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
                               ones(1,size(x_rk4,2))*0.05);
 figure;            
+hold on;
 quiver(x_euler(2,:),x_euler(1,:),...
        foo_euler, bar_euler, 0, 'LineWidth', 1.5);
 quiver(x_rk4(2,:), x_rk4(1,:),...
        foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);   
+plot(x_euler(2,:),x_euler(1,:),'bo');
+plot(x_rk4(2,:), x_rk4(1,:), 'ro');
 title('Circle');
+hold off;
 
 %% squiggles!
 u(:,1) = 1.*ones(90,1);
@@ -266,13 +274,17 @@ x_rk4 = sim_rk4(size(u,1), x0, u, param);
 [bar_euler, foo_euler] = pol2cart(x_euler(3,:),...
                       ones(1,size(x_euler,2))*0.3);
 [bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
-                              ones(1,size(x_rk4,2))*0.);                  
-figure;                  
+                              ones(1,size(x_rk4,2))*0.3);                  
+figure;             
+hold on;
 quiver(x_euler(2,:),x_euler(1,:),...
-       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+       foo_euler, bar_euler, 0, 'b', 'LineWidth', 1.5);
+plot(x_euler(2,:),x_euler(1,:),'ob');
 quiver(x_rk4(2,:), x_rk4(1,:),...
        foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);   
+plot(x_rk4(2,:), x_rk4(1,:), 'ro');
 title('Squiggles!');
+hold off;
 
 %%
 clear u;
@@ -286,9 +298,14 @@ x_rk4 = sim_rk4(size(u,1), x0, u, param);
 [bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
                               ones(1,size(x_rk4,2))*0.1);                  
 figure;                  
+hold on;
 quiver(x_euler(2,:),x_euler(1,:),...
        foo_euler, bar_euler, 0, 'LineWidth', 1.5);
 quiver(x_rk4(2,:), x_rk4(1,:),...
        foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 2);   
+plot(x_euler(2,:),x_euler(1,:), 'bo');
+plot(x_rk4(2,:), x_rk4(1,:), 'ro')
 title('Different squiggles');
+hold off;
 
+clear u;
