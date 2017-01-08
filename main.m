@@ -187,14 +187,108 @@ hold on;
 plot(osa_fit(:,1),osa_fit(:,2), 'r-', 'DisplayName', 'OSA extrap.')
 legend('show');
 hold off;
-
+pp
 figure(rob_y);
 hold on;
 plot(1:size(osa_fit, 1),osa_fit(:,2),'r-', 'DisplayName', 'OSA extrap.')
 legend('show');
 hold off;
 
-%% 2.a)
+%% 2.
+clear all;
+
+load('exercise8_data.mat');
 
 param = [0.2; 0.2; 0.6];
 x0 = [0;0;0];
+
+x_euler = sim_euler(size(u,1), x0, u, param);
+x_rk4 = sim_rk4(size(u,1), x0, u, param);
+
+[bar_euler, foo_euler] = pol2cart(x_euler(3,:),...
+                                  ones(1,size(x_euler,2))*0.03);
+[bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
+                              ones(1,size(x_rk4,2))*0.02);
+                  
+sim_fig = figure;
+hold on;
+%plot(x_eulerim(2,:),x_eulerim(1,:),'x');
+quiver(x_euler(2,:),x_euler(1,:),...
+       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+quiver(x_rk4(2,:), x_rk4(1,:),...
+       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);
+hold off;
+
+%% horsin around
+% u: one wheel has constant speed, one wheel goes in a sine. This should
+% result in a wavelike movement
+
+%straight line up, slowing down constantly, quite boring
+u(:,1) = linspace(1,0,90)';
+u(:,2) = u(:,1);
+x_euler = sim_euler(size(u,1), x0, u, param);
+x_rk4 = sim_rk4(size(u,1), x0, u, param);
+[bar_euler, foo_euler] = pol2cart(x_euler(3,:),...
+                      ones(1,size(x_euler,2))*0.03);
+[bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
+                              ones(1,size(x_rk4,2))*0.02);                  
+figure;                  
+quiver(x_euler(2,:),x_euler(1,:),...
+       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+quiver(x_rk4(2,:), x_rk4(1,:),...
+       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);   
+title('Simple (boring) line');
+
+%% circle
+u(:,1) = 0.5*ones(90,1);
+u(:,2) = 1.*ones(90,1);
+x_euler = sim_euler(size(u,1), x0, u, param);
+x_rk4 = sim_rk4(size(u,1), x0, u, param);
+[bar_euler, foo_euler] = pol2cart(x_euler(3,:),...
+                                  ones(1,size(x_euler,2))*0.03);
+[bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
+                              ones(1,size(x_rk4,2))*0.05);
+figure;            
+quiver(x_euler(2,:),x_euler(1,:),...
+       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+quiver(x_rk4(2,:), x_rk4(1,:),...
+       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);   
+title('Circle');
+
+%% squiggles!
+u(:,1) = 1.*ones(90,1);
+for i = 1:90
+    u(i,1) = 3.+((-1)^floor(i/2))*mod(i,2);
+    u(i,2) = 3.-((-1)^floor(i/2))*mod(i,2);
+end
+x_euler = sim_euler(size(u,1), x0, u, param);
+x_rk4 = sim_rk4(size(u,1), x0, u, param);
+[bar_euler, foo_euler] = pol2cart(x_euler(3,:),...
+                      ones(1,size(x_euler,2))*0.3);
+[bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
+                              ones(1,size(x_rk4,2))*0.);                  
+figure;                  
+quiver(x_euler(2,:),x_euler(1,:),...
+       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+quiver(x_rk4(2,:), x_rk4(1,:),...
+       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 1.5);   
+title('Squiggles!');
+
+%%
+clear u;
+u(:,1) = 3*cos(linspace(0,30*pi,180))';
+u(:,2) = 3*sin(linspace(0,30*pi,180))';
+
+x_euler = sim_euler(size(u,1), x0, u, param);
+x_rk4 = sim_rk4(size(u,1), x0, u, param);
+[bar_euler, foo_euler] = pol2cart(x_euler(3,:),...
+                      ones(1,size(x_euler,2))*0.1);
+[bar_rk4, foo_rk4] = pol2cart(x_rk4(3,:),...
+                              ones(1,size(x_rk4,2))*0.1);                  
+figure;                  
+quiver(x_euler(2,:),x_euler(1,:),...
+       foo_euler, bar_euler, 0, 'LineWidth', 1.5);
+quiver(x_rk4(2,:), x_rk4(1,:),...
+       foo_rk4, bar_rk4, 0, 'r', 'LineWidth', 2);   
+title('Different squiggles');
+
