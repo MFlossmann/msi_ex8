@@ -2,7 +2,6 @@ function [ x_sim ] = sim_euler( t, x0, u, param )
 %sim_euler Simulates the path of a robot, given the initial position and
 %control variable u
 
-
 N = size(u,1);
 m = size(x0,1);
 
