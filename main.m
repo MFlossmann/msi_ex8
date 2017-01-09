@@ -207,7 +207,7 @@ hold on;
 plot(osa_fit(:,1),osa_fit(:,2), 'r-', 'DisplayName', 'OSA extrap.')
 for i= 1:size(ellipse,3)
     % plot the ellipses
-    %plot(ellipse(1,:,i), ellipse(2,:,i), 'k', 'DisplayName', 'Conf. ellipsoids');
+    plot(ellipse(1,:,i), ellipse(2,:,i), 'k', 'DisplayName', 'Conf. ellipsoids');
     %Ellipsoids get bigger...
     %pause(0.25);
 end
@@ -236,7 +236,7 @@ R_L= 0.2; %[m]
 R_R= 0.2; %[m]
 L= 0.6; %[m]
 param = [R_L; R_R; L];
-u= u*360;
+%u= u*360;
 %init values
 x0 = [0;0;0];
 % 
