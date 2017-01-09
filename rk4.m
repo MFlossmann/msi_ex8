@@ -6,7 +6,7 @@ k2 = ode(deltaT, x0 + k1 * deltaT/2, u, param);
 k3 = ode(deltaT, x0 + k2 * deltaT/2, u, param);
 k4 = ode(deltaT, x0 + k3 * deltaT, u, param);
 
-x_next = x0 + deltaT * (k1 + k2 + k3 + k4) / 6;
+x_next = x0 + deltaT * (k1 + 2*k2 + 2*k3 + k4) / 6;
 
 end
 
