@@ -29,10 +29,10 @@ theta = zeros(d,control_dim);
 
 theta= pinv(Phi)*XYm;
 
-fit = @(k,theta) theta'*[k.^4;k.^3;k.^2;k;ones(1,size(k,2))];
-lls_fit = fit(linspace(1,80),theta)';
+%fit = @(k,theta) theta'*[k.^4;k.^3;k.^2;k;ones(1,size(k,2))];
+%lls_fit = fit(linspace(1,80),theta)';
 
-lls_fit_2= Phi*theta;
+lls_fit= Phi*theta;
 
 robot_2D = figure;
 hold on;
@@ -45,7 +45,7 @@ hold off;
 rob_x = figure;
 hold on;
 plot(t,XYm(:,1),'o', 'DisplayName', 'True positions')
-plot(linspace(1,80),lls_fit(:,1),'-', 'DisplayName', 'LLS fit')
+plot(t,lls_fit(:,1),'-', 'DisplayName', 'LLS fit')
 %legend('show');
 title('x position and estimate')
 hold off;
@@ -53,7 +53,7 @@ hold off;
 rob_y = figure;
 hold on;
 plot(t,XYm(:,2),'o', 'DisplayName', 'True positions')
-plot(linspace(1,80),lls_fit(:,2),'-', 'DisplayName', 'LLS fit')
+plot(t,lls_fit(:,2),'-', 'DisplayName', 'LLS fit')
 %legend('show');
 title('y position and estimate')
 hold off;
@@ -65,7 +65,7 @@ Q = eye(d);
 rls_fit = zeros(N,control_dim);
 
 for i = 1:N
-    [theta_RLS, Q] = RLS(theta_RLS, Q, Phi(i,:,:)', XYm(i,:), 1);
+    [theta_RLS, Q] = RLS(theta_RLS, Q, Phi(i,:)', XYm(i,:), 1);
     rls_fit(i,:)= Phi(i,:)*theta_RLS;
 end
 
@@ -123,7 +123,7 @@ Q_smooth = eye(d);
 rls_fit_smooth = zeros(N,control_dim);
 for i = 1:N
     [theta_RLS_smooth, Q_smooth] = RLS(theta_RLS_smooth, Q_smooth, Phi(i,:,:)', XYm(i,:), 0.85);
-    rls_fit_smooth(i,:) = fit(i,theta_RLS_smooth)';
+    rls_fit_smooth(i,:) = Phi(i,:)*theta_RLS_smooth;
 end
 
 figure(robot_2D);
@@ -171,15 +171,16 @@ for i = 1:N
     
         % extrapolate
         osa_fit(i,:) = Phi(i,:)*theta_RLS;
+        
     
         % calculate sigmas for theta and one step ahead estimates
-        for j = 1:control_dim
-            sigma_theta(:,:,j) =(norm(XYm(1:i,j) - Phi(1:i,:) * theta_RLS(:,j))/(N-d))* ...
-                                    inv(Phi(1:i,:)'*Phi(1:i,:));
-            %warum ist z.B. erste Zeile inv?
-            sigma_osa(i,j) = Phi(i+1,:)*sigma_theta(:,:,1)*Phi(i+1,:)';
-            
-        end
+%         for j = 1:control_dim
+%             sigma_theta(:,:,j) =(norm(XYm(1:i,j) - Phi(1:i,:) * theta_RLS(:,j))/(N-d))* ...
+%                                     inv(Phi(1:i,:)'*Phi(1:i,:));
+%             %warum ist z.B. erste Zeile inv?
+%             sigma_osa(i,j) = Phi(i+1,:)*sigma_theta(:,:,1)*Phi(i+1,:)';
+%             
+%         end
         %compute covariance matrix for data points
         cov_osa= cov(osa_fit(1:i,:));
         % Compute the eigenvalues and eigenvectors
@@ -206,7 +207,7 @@ hold on;
 plot(osa_fit(:,1),osa_fit(:,2), 'r-', 'DisplayName', 'OSA extrap.')
 for i= 1:size(ellipse,3)
     % plot the ellipses
-    plot(ellipse(1,:,i), ellipse(2,:,i), 'k', 'DisplayName', 'Conf. ellipsoids');
+    %plot(ellipse(1,:,i), ellipse(2,:,i), 'k', 'DisplayName', 'Conf. ellipsoids');
     %Ellipsoids get bigger...
     %pause(0.25);
 end
@@ -235,7 +236,7 @@ R_L= 0.2; %[m]
 R_R= 0.2; %[m]
 L= 0.6; %[m]
 param = [R_L; R_R; L];
-
+u= u*360;
 %init values
 x0 = [0;0;0];
 % 
@@ -243,8 +244,9 @@ x0 = [0;0;0];
 % 
 % x_next= euler_step(1, x0, u, @robot_ode, param);
 
+t_sample= 0.0159;
 %time vector for robot's path
-t= (0:size(u,1));
+t= 0:t_sample:t_sample*(size(u,1)-1);
 
 %simulate robot's path using euler steps
 x_sim_euler= sim_euler(t, x0, u, param);
@@ -270,6 +272,13 @@ figure(robot_sim)
 plot(y_rk(1,:), y_rk(2,:), 'b', 'DisplayName', 'Runge-Kutta method of order 4');
 
 legend('show');
+
+% figure(5)
+% plot(t, u(:,1), 'r', 'DisplayName', 'left wheel');
+% hold on;
+% plot(t, u(:,2), 'b', 'DisplayName', 'right wheel');
+% legend('show')
+
 
 
 
